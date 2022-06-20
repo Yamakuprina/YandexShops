@@ -11,7 +11,7 @@
     <groupId>yandex.backend-school</groupId>
     <artifactId>Shops</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>Shops</name>
     <description>Shops</description>
     <properties>
@@ -43,6 +43,7 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>yandex-shops</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
