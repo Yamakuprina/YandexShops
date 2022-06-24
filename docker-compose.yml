@@ -5,7 +5,10 @@ services:
     image: 'shops:latest'
     build:
       context: .
+    ports:
+      - 0.0.0.0:80:8080
     container_name: app
+    restart: always
     depends_on:
       - db
     environment:
@@ -17,7 +20,10 @@ services:
   db:
     image: 'postgres:latest'
     container_name: db
+    restart: always
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=shops-db
+    volumes:
+      - /home/ubuntu/Shops-db:/var/lib/postgresql/data

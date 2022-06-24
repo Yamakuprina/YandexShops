@@ -1,18 +1,30 @@
 package yandex.backendschool.shops.model;
 
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.util.Date;
 
+@Entity
 public class ShopUnitStatisticUnit {
-    String id;
+    @Id
+    String logId;
+    @Column(nullable = false)
+    String unitId;
+    @Column(nullable = false)
     String name;
+    @Column(nullable = false)
     Date date;
     String parentId;
+    @Enumerated
+    @Column(nullable = false)
     ShopUnitType type;
     Integer price;
 
     public ShopUnitStatisticUnit(String id, String name, Date date, String parentId, ShopUnitType type, Integer price) {
-        this.id = id;
+        this.logId = id + date.toString();
+        this.unitId = id;
         this.name = name;
         this.date = date;
         this.parentId = parentId;
@@ -20,12 +32,25 @@ public class ShopUnitStatisticUnit {
         this.price = price;
     }
 
+    public ShopUnitStatisticUnit(ShopUnit shopUnit) {
+        this.logId = shopUnit.getId() + shopUnit.getDate();
+        this.unitId = shopUnit.getId();
+        this.name = shopUnit.getName();
+        this.date = shopUnit.getRealDate();
+        this.parentId = shopUnit.getParentId();
+        this.type = shopUnit.getType();
+        this.price = shopUnit.getPrice();
+    }
+
+    public ShopUnitStatisticUnit() {
+    }
+
     public String getId() {
-        return id;
+        return unitId;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.unitId = id;
     }
 
     public String getName() {

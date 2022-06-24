@@ -20,54 +20,55 @@ public class Controller {
     }
 
     @PostMapping("imports")
-    public ResponseEntity<?> importUnits(@RequestBody ShopUnitImportRequest importRequest){
+    public ResponseEntity<?> importUnits(@RequestBody ShopUnitImportRequest importRequest) {
         try {
             shopUnitImportService.importShopUnits(importRequest);
             return ResponseEntity.status(200).body("Import Success");
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<?> deleteUnit(@PathVariable(value="id") String id){
+    public ResponseEntity<?> deleteUnit(@PathVariable(value = "id") String id) {
         try {
             shopUnitImportService.deleteUnitById(id);
             return ResponseEntity.status(200).body("Delete Success");
-        } catch (HttpStatusCodeException f){
+        } catch (HttpStatusCodeException f) {
             return ResponseEntity.status(404).body(new ShopError(HttpStatus.NOT_FOUND, "Item not found"));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @GetMapping("nodes/{id}")
-    public ResponseEntity<?> getUnit(@PathVariable(value="id") String id){
+    public ResponseEntity<?> getUnit(@PathVariable(value = "id") String id) {
         try {
             return ResponseEntity.status(200).body(shopUnitImportService.getUnitById(id));
-        } catch (HttpStatusCodeException f){
+        } catch (HttpStatusCodeException f) {
             return ResponseEntity.status(404).body(new ShopError(HttpStatus.NOT_FOUND, "Item not found"));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
     @GetMapping("sales")
-    public ResponseEntity<?> getSales(@RequestParam String date){
+    public ResponseEntity<?> getSales(@RequestParam String date) {
         try {
             return ResponseEntity.status(200).body(shopUnitImportService.get24hSales(date));
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
-//    @GetMapping("node/{id}/statistic")
-//    public ResponseEntity<?> getNodeStatistic(@PathVariable(value="id") String id, @RequestParam String dateStart, @RequestParam String dateEnd){
-//        try {
-//            return ResponseEntity.status(200).body(shopUnitImportService.getNodeStatisticBetweenDates(id, dateStart, dateEnd));
-//        } catch (HttpStatusCodeException f){
-//            return ResponseEntity.status(404).body(new ShopError(HttpStatus.NOT_FOUND, "Item not found"));
-//        } catch (Exception e){
-//            return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
-//        }
-//    }
+
+    @GetMapping("node/{id}/statistic")
+    public ResponseEntity<?> getNodeStatistic(@PathVariable(value = "id") String id, @RequestParam String dateStart, @RequestParam String dateEnd) {
+        try {
+            return ResponseEntity.status(200).body(shopUnitImportService.getNodeStatisticHistoryBetweenDates(id, dateStart, dateEnd));
+        } catch (HttpStatusCodeException f) {
+            return ResponseEntity.status(404).body(new ShopError(HttpStatus.NOT_FOUND, "Item not found"));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, e.getMessage()));
+        }
+    }
 }

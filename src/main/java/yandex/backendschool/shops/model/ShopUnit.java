@@ -57,13 +57,13 @@ public class ShopUnit {
         return sdf.format(date);
     }
 
-    @JsonIgnore
-    public Date getRealDate(){
-        return date;
-    }
-
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @JsonIgnore
+    public Date getRealDate() {
+        return date;
     }
 
     public String getParentId() {

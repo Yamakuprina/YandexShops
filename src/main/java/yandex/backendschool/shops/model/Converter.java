@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 public class Converter {
-    public static List<ShopUnit> requestToShopUnits(ShopUnitImportRequest importRequest, Date updateDate) throws Exception {
+    public static List<ShopUnit> importRequestToShopUnits(ShopUnitImportRequest importRequest, Date updateDate) throws Exception {
         List<ShopUnit> units = new ArrayList<>();
-        for (ShopUnitImport unitImport : importRequest.getItems()){
+        for (ShopUnitImport unitImport : importRequest.getItems()) {
             ShopUnit shopUnit = new ShopUnit(unitImport.getId(), unitImport.getName(), updateDate, unitImport.getParentId(), unitImport.getType(), unitImport.getPrice(), null);
             if (shopUnit.getId().equals(shopUnit.getParentId())) throw new Exception("Validation Failed");
             if (shopUnit.getType().equals(ShopUnitType.CATEGORY)) shopUnit.setChildren(new ArrayList<>());
@@ -16,12 +16,12 @@ public class Converter {
         return units;
     }
 
-    public static ShopUnitStatisticResponse shopUnitsToStatisticResponse(List<ShopUnit> shopUnits){
+    public static List<ShopUnitStatisticUnit> shopUnitsToStatisticUnits(List<ShopUnit> shopUnits) {
         List<ShopUnitStatisticUnit> statisticUnits = new ArrayList<>();
-        for(ShopUnit shopUnit:shopUnits){
-            ShopUnitStatisticUnit statisticUnit = new ShopUnitStatisticUnit(shopUnit.getId(), shopUnit.getName(), shopUnit.getRealDate(),shopUnit.getParentId(),shopUnit.getType(),shopUnit.getPrice());
+        for (ShopUnit shopUnit : shopUnits) {
+            ShopUnitStatisticUnit statisticUnit = new ShopUnitStatisticUnit(shopUnit);
             statisticUnits.add(statisticUnit);
         }
-        return new ShopUnitStatisticResponse(statisticUnits);
+        return statisticUnits;
     }
 }

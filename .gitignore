@@ -38,3 +38,4 @@ build/
 /target/surefire-reports/
 /target/test-classes/
 /target/yandex-shops.jar.original
+/src/main/java/yandex/backendschool/shops/taskDescription/
