@@ -9,7 +9,9 @@ public class Converter {
         List<ShopUnit> units = new ArrayList<>();
         for (ShopUnitImport unitImport : importRequest.getItems()) {
             ShopUnit shopUnit = new ShopUnit(unitImport.getId(), unitImport.getName(), updateDate, unitImport.getParentId(), unitImport.getType(), unitImport.getPrice(), null);
-            if (shopUnit.getId().equals(shopUnit.getParentId())) throw new Exception("Validation Failed");
+            if (shopUnit.getType() == null) throw new Exception("Validation Failed");
+            if (shopUnit.getName() == null) throw new Exception("Validation Failed");
+            if (shopUnit.getId() == null) throw new Exception("Validation Failed");
             if (shopUnit.getType().equals(ShopUnitType.CATEGORY)) shopUnit.setChildren(new ArrayList<>());
             units.add(shopUnit);
         }

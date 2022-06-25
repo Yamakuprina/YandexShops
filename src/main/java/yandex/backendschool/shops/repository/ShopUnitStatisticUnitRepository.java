@@ -7,7 +7,6 @@ import yandex.backendschool.shops.model.ShopUnitType;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ShopUnitStatisticUnitRepository extends JpaRepository<ShopUnitStatisticUnit, String> {
@@ -17,5 +16,5 @@ public interface ShopUnitStatisticUnitRepository extends JpaRepository<ShopUnitS
 
     void deleteByUnitIdEquals(String id);
 
-    Optional<ShopUnitStatisticUnit> findByUnitIdEquals(String id);
+    Integer countAllByUnitIdEquals(String id);
 }

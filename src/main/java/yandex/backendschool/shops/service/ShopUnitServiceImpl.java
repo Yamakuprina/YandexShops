@@ -42,6 +42,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     @Override
     @Transactional
     public void deleteUnitById(String id) throws Exception {
+        if (id.length() != 36) throw new Exception("Validation Failed");
         Optional<ShopUnit> deleteCandidate = shopUnitRepository.findById(id);
         if (deleteCandidate.isEmpty()) throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         String parentOfDeletedId = deleteCandidate.get().getParentId();
@@ -52,8 +53,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
         updateCategoriesPrices(List.of(parentOfDeleted.get()));
     }
 
-    private void deleteCategoryStatistics(ShopUnit shopUnit){
-        for (ShopUnit child : shopUnit.getChildren()){
+    private void deleteCategoryStatistics(ShopUnit shopUnit) {
+        for (ShopUnit child : shopUnit.getChildren()) {
             if (child.getType().equals(ShopUnitType.CATEGORY)) deleteCategoryStatistics(child);
             shopUnitStatisticUnitRepository.deleteByUnitIdEquals(child.getId());
         }
@@ -61,7 +62,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     }
 
     @Override
-    public ShopUnit getUnitById(String id) throws Exception{
+    public ShopUnit getUnitById(String id) throws Exception {
+        if (id.length() != 36) throw new Exception("Validation Failed");
         Optional<ShopUnit> shopUnit = shopUnitRepository.findById(id);
         if (shopUnit.isEmpty()) throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         ShopUnit shopUnit1 = shopUnit.get();
@@ -81,10 +83,11 @@ public class ShopUnitServiceImpl implements ShopUnitService {
 
     @Override
     public ShopUnitStatisticResponse getNodeStatisticHistoryBetweenDates(String id, String dateStart, String dateEnd) throws Exception {
+        if (id.length() != 36) throw new Exception("Validation Failed");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date startDate = sdf.parse(dateStart);
         Date endDate = sdf.parse(dateEnd);
-        if (shopUnitRepository.findById(id).isEmpty())
+        if (shopUnitStatisticUnitRepository.countAllByUnitIdEquals(id) <= 0)
             throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         List<ShopUnitStatisticUnit> units = shopUnitStatisticUnitRepository.findAllByDateGreaterThanEqualAndDateLessThanAndUnitIdEquals(startDate, endDate, id);
         return new ShopUnitStatisticResponse(units);
@@ -102,7 +105,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
 
     private void checkConsistency(List<ShopUnit> newUnits) throws Exception {
         for (ShopUnit unit : newUnits) {
-            if (unit.getType()==null) throw new Exception("Validation Failed");
+            if (unit.getId().length() != 36) throw new Exception("Validation Failed");
+            if (unit.getId().equals(unit.getParentId())) throw new Exception("Validation Failed");
             if (unit.getType().equals(ShopUnitType.CATEGORY) && unit.getPrice() != null)
                 throw new Exception("Validation Failed");
             if (unit.getType().equals(ShopUnitType.OFFER) && (unit.getPrice() == null || unit.getPrice() < 0))

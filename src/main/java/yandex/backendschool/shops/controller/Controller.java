@@ -68,7 +68,7 @@ public class Controller {
             return ResponseEntity.status(200).body(shopUnitService.getNodeStatisticHistoryBetweenDates(id, dateStart, dateEnd));
         } catch (HttpStatusCodeException f) {
             return ResponseEntity.status(404).body(new ShopError(HttpStatus.NOT_FOUND, "Item not found"));
-            } catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(400).body(new ShopError(HttpStatus.BAD_REQUEST, "Validation Failed"));
         }
     }
