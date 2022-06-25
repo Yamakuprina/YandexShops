@@ -4,13 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 import yandex.backendschool.shops.model.*;
 import yandex.backendschool.shops.repository.ShopUnitRepository;
 import yandex.backendschool.shops.repository.ShopUnitStatisticUnitRepository;
 
 import javax.transaction.Transactional;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,16 +18,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ShopUnitImportService {
+public class ShopUnitServiceImpl implements ShopUnitService {
 
     private final ShopUnitRepository shopUnitRepository;
     private final ShopUnitStatisticUnitRepository shopUnitStatisticUnitRepository;
 
-    public ShopUnitImportService(@Autowired ShopUnitRepository shopUnitRepository, @Autowired ShopUnitStatisticUnitRepository statisticUnitRepository) {
+    public ShopUnitServiceImpl(@Autowired ShopUnitRepository shopUnitRepository, @Autowired ShopUnitStatisticUnitRepository statisticUnitRepository) {
         this.shopUnitRepository = shopUnitRepository;
         this.shopUnitStatisticUnitRepository = statisticUnitRepository;
     }
 
+    @Override
     public void importShopUnits(ShopUnitImportRequest importRequest) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date date = sdf.parse(importRequest.getUpdateDate());
@@ -40,8 +39,9 @@ public class ShopUnitImportService {
         updateCategoriesDates(units, date);
     }
 
+    @Override
     @Transactional
-    public void deleteUnitById(String id) throws HttpStatusCodeException {
+    public void deleteUnitById(String id) throws Exception {
         Optional<ShopUnit> deleteCandidate = shopUnitRepository.findById(id);
         if (deleteCandidate.isEmpty()) throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         String parentOfDeletedId = deleteCandidate.get().getParentId();
@@ -52,7 +52,8 @@ public class ShopUnitImportService {
         updateCategoriesPrices(List.of(parentOfDeleted.get()));
     }
 
-    public ShopUnit getUnitById(String id) throws HttpStatusCodeException {
+    @Override
+    public ShopUnit getUnitById(String id) throws Exception{
         Optional<ShopUnit> shopUnit = shopUnitRepository.findById(id);
         if (shopUnit.isEmpty()) throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         ShopUnit shopUnit1 = shopUnit.get();
@@ -60,7 +61,8 @@ public class ShopUnitImportService {
         return shopUnit1;
     }
 
-    public ShopUnitStatisticResponse get24hSales(String stringDate) throws ParseException {
+    @Override
+    public ShopUnitStatisticResponse get24hSales(String stringDate) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date date = sdf.parse(stringDate);
         LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).minusDays(1);
@@ -69,6 +71,7 @@ public class ShopUnitImportService {
         return new ShopUnitStatisticResponse(sales);
     }
 
+    @Override
     public ShopUnitStatisticResponse getNodeStatisticHistoryBetweenDates(String id, String dateStart, String dateEnd) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date startDate = sdf.parse(dateStart);
@@ -103,7 +106,7 @@ public class ShopUnitImportService {
         }
     }
 
-    public void updateCategoriesDates(List<ShopUnit> changedUnits, Date date) {
+    private void updateCategoriesDates(List<ShopUnit> changedUnits, Date date) {
         for (ShopUnit shopUnit : changedUnits) {
             Optional<ShopUnit> root = Optional.ofNullable(shopUnit);
             while (root.get().getParentId() != null) {
@@ -122,7 +125,7 @@ public class ShopUnitImportService {
         }
     }
 
-    public void updateCategoriesPrices(List<ShopUnit> changedNodes) {
+    private void updateCategoriesPrices(List<ShopUnit> changedNodes) {
         for (ShopUnit shopUnit : changedNodes) {
             Optional<ShopUnit> root = Optional.ofNullable(shopUnit);
             shopUnitStatisticUnitRepository.save(new ShopUnitStatisticUnit(root.get()));
