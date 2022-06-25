@@ -35,8 +35,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
         List<ShopUnit> units = Converter.importRequestToShopUnits(importRequest, date);
         checkConsistency(units);
         shopUnitRepository.saveAll(units);
-        updateCategoriesPrices(units);
         updateCategoriesDates(units, date);
+        updateCategoriesPrices(units);
     }
 
     @Override
@@ -47,9 +47,17 @@ public class ShopUnitServiceImpl implements ShopUnitService {
         String parentOfDeletedId = deleteCandidate.get().getParentId();
         Optional<ShopUnit> parentOfDeleted = parentOfDeletedId == null ? Optional.empty() : shopUnitRepository.findById(parentOfDeletedId);
         shopUnitRepository.deleteById(id);
-        shopUnitStatisticUnitRepository.deleteByUnitIdEquals(id);
+        deleteCategoryStatistics(deleteCandidate.get());
         if (parentOfDeleted.isEmpty()) return;
         updateCategoriesPrices(List.of(parentOfDeleted.get()));
+    }
+
+    private void deleteCategoryStatistics(ShopUnit shopUnit){
+        for (ShopUnit child : shopUnit.getChildren()){
+            if (child.getType().equals(ShopUnitType.CATEGORY)) deleteCategoryStatistics(child);
+            shopUnitStatisticUnitRepository.deleteByUnitIdEquals(child.getId());
+        }
+        shopUnitStatisticUnitRepository.deleteByUnitIdEquals(shopUnit.getId());
     }
 
     @Override
@@ -94,6 +102,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
 
     private void checkConsistency(List<ShopUnit> newUnits) throws Exception {
         for (ShopUnit unit : newUnits) {
+            if (unit.getType()==null) throw new Exception("Validation Failed");
             if (unit.getType().equals(ShopUnitType.CATEGORY) && unit.getPrice() != null)
                 throw new Exception("Validation Failed");
             if (unit.getType().equals(ShopUnitType.OFFER) && (unit.getPrice() == null || unit.getPrice() < 0))
@@ -102,6 +111,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
             Optional<ShopUnit> unitParent = newUnits.stream().filter(shopUnit -> Objects.equals(unit.getParentId(), shopUnit.getId())).findFirst();
             if (unitParent.isEmpty()) unitParent = shopUnitRepository.findById(unit.getParentId());
             if (unitParent.isPresent() && unitParent.get().getType().equals(ShopUnitType.OFFER))
+                throw new Exception("Validation Failed");
+            if (unitParent.isPresent() && Objects.equals(unitParent.get().getParentId(), unit.getId()))
                 throw new Exception("Validation Failed");
         }
     }
@@ -165,6 +176,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
         int res = (int) Math.floor(sum / offer_count);
         if (res == 0 && offer_count == 0) shopUnitCategory.setPrice(null);
         else shopUnitCategory.setPrice(res);
+        shopUnitStatisticUnitRepository.save(new ShopUnitStatisticUnit(shopUnitCategory));
         return List.of((int) sum, offer_count);
     }
 }

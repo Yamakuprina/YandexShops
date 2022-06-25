@@ -6,6 +6,11 @@ public class ShopUnitImportRequest {
     List<ShopUnitImport> items;
     String updateDate;
 
+    public ShopUnitImportRequest(List<ShopUnitImport> items, String updateDate) {
+        this.items = items;
+        this.updateDate = updateDate;
+    }
+
     public List<ShopUnitImport> getItems() {
         return items;
     }
