@@ -87,6 +87,7 @@ public class ShopUnitServiceImpl implements ShopUnitService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date startDate = sdf.parse(dateStart);
         Date endDate = sdf.parse(dateEnd);
+        if (startDate.after(endDate)) throw new Exception("Validation Failed");
         if (shopUnitStatisticUnitRepository.countAllByUnitIdEquals(id) <= 0)
             throw new HttpServerErrorException(HttpStatus.NOT_FOUND, "Item not found");
         List<ShopUnitStatisticUnit> units = shopUnitStatisticUnitRepository.findAllByDateGreaterThanEqualAndDateLessThanAndUnitIdEquals(startDate, endDate, id);
@@ -106,6 +107,8 @@ public class ShopUnitServiceImpl implements ShopUnitService {
     private void checkConsistency(List<ShopUnit> newUnits) throws Exception {
         for (ShopUnit unit : newUnits) {
             if (unit.getId().length() != 36) throw new Exception("Validation Failed");
+            if (unit.getParentId()!=null)
+                if (unit.getParentId().length() != 36) throw new Exception("Validation Failed");
             if (unit.getId().equals(unit.getParentId())) throw new Exception("Validation Failed");
             if (unit.getType().equals(ShopUnitType.CATEGORY) && unit.getPrice() != null)
                 throw new Exception("Validation Failed");
