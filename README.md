@@ -1,10 +1,10 @@
-# YandexShops #
+## YandexShops
 Task for Yandex backend school. 
 
 Jar file included to git because maven didnt work properly on the dedicated ubuntu server, so I wasnt able to build jar on place.
 App supports reverse order adding (Adding children, refering to parent by parent-id, then adding parent).
 
-# Описание #
+## Описание
 
 В данном задании вам предлагается реализовать бэкенд для веб-сервиса сравнения цен, аналогичный
 сервису [Яндекс Товары](https://yandex.ru/products). Обычно взаимодействие с такими сервисами происходит следующим
@@ -19,7 +19,7 @@ App supports reverse order adding (Adding children, refering to parent by parent
 пользователям - смотреть какие товары были обновлены за последние сутки, а также следить за динамикой цен товара или
 категории за указанный интервал времени.
 
-# Технические требования #
+## Технические требования
 
 Реализуйте сервис на Python или Java в зависимости от выбранного направления школы. Сервис должен удовлетворять
 следующим требованиям:
@@ -38,7 +38,7 @@ App supports reverse order adding (Adding children, refering to parent by parent
 - RPS (Request per second) получения статистики, недавних изменений и информации об элементе суммарно не превосходит 100
   запросов в секунду
 
-# Тестирование #
+## Тестирование
 
 В качестве предварительного тестирования мы подготовили для вас юнит-тест <code>unit_test.py</code>, написанный на
 Python. Он позволит проверить минимальную работоспособность вашего бэкенда до отправки решения на проверку.
@@ -55,7 +55,7 @@ Python. Он позволит проверить минимальную рабо
 
 Рекомендуется написать свои тесты для проверки разработанной функциональности.
 
-# Развёртывание приложения #
+## Развёртывание приложения
 
 На выделенном контейнере вы можете:
 
