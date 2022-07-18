@@ -1,4 +1,6 @@
 HELP.md
+mvnw
+mvnw.cmd
 .mvn/
 !**/src/main/**/target/
 !**/src/test/**/target/
