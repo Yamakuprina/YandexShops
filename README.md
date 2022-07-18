@@ -1,8 +1,7 @@
 ## YandexShops
-Task for Yandex backend school. 
+Task for Yandex Backend School. 
 
-Jar file included to git because maven didnt work properly on the dedicated ubuntu server, so I wasnt able to build jar on place.
-App supports reverse order adding (Adding children, refering to parent by parent-id, then adding parent).
+Jar file included to git because Maven didnt work properly on the dedicated ubuntu server, so I wasnt able to build jar on place.
 
 ## Описание
 
