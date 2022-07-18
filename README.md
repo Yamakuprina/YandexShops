@@ -1,7 +1,5 @@
 ## YandexShops
-Task for Yandex Backend School. 
-
-Jar file included to git because Maven didnt work properly on the dedicated ubuntu server, so I wasnt able to build jar on place.
+Task for Yandex Backend School.
 
 ## Описание
 
