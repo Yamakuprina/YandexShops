@@ -1,5 +1,4 @@
-## YandexShops
-Task for Yandex Backend School.
+# YandexShops
 
 ## Описание
 
